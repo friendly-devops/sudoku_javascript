@@ -5,6 +5,7 @@ var numL = [];
 var val;
 let num;
 var tileSize = 48;
+var visibleTiles = 41;
 let startDiv = document.getElementById("start")
 let resetDiv = document.getElementById("reset")
 let clockDiv = document.getElementById("clock")
@@ -85,6 +86,31 @@ function checkBoard(){
         }
     }
 }
+
+function rev_interch_tiles(){
+    for (var i = 0; i < grid; i++){
+        for (var j = 0; j < grid; j++){
+                for (var k = 0; k < i; k++){
+                    let index = board[k][j].value;
+                    for (var l = 0; l < j; l++){
+                        testval_1 = board[k][l].value
+                        if (testval_1 == val){
+                            testval_2 = board[i][l].value;
+                            if (testval_2 == index){
+                                board[k][j].visible = true;
+                                board[k][l].visible = true;
+                                board[i][l].visible = true;
+                                board[i][j].visible = true;
+                                visibleTiles = visibleTiles - 4;
+                                continue;
+                            }
+                        }
+                    }
+                }
+        }
+    }
+}
+
 function timer(){
     time++
     minute = parseInt(time / 60, 10)
@@ -126,15 +152,20 @@ for (var i = 0; i < grid; i++){
 
 
 function create_board(){
+    // Iterate through the rows
     for (var i = 0; i < grid; i++){
+        // Populate a list of from 1 to 9 of numbers to potentially be used
         for (var n = 0; n < grid; n++){
             let num = n+1
             numL.push(num.toString());
         }
+        // Iterate through the columns
         for (var j = 0; j < grid; j++){
+            // Create temporary variable to store potential numbers
             let ylist = [...numL];
             if (i >= 1){
                 for (var k = 0; k < i; k++){
+                    // Remove all the used numbers within a column from the potential numbers
                     let index = ylist.indexOf(board[k][j].value);
                     if (index > -1){
                         ylist.splice(index, 1);
@@ -142,6 +173,7 @@ function create_board(){
                 }
                 xPos = -(i%3);
                 yPos = -(j%3);
+                // remove all the used numbers from the 3*3 box from potential numbers
                 for (var l = 0; l < 3; l++){
                     for (var m = 0; m < 3; m++){
                         let index = ylist.indexOf(board[i + xPos][j + yPos].value)
@@ -153,6 +185,7 @@ function create_board(){
                     xPos++;
                     yPos = -(j%3);
                 }
+                // Refresh the row if all potential numbers have been exhausted
                 if (ylist.length < 1){
                     j = -1;
                     numL = [];
@@ -163,13 +196,37 @@ function create_board(){
                     }
                     continue;
                 }
+                // Set the value to a random number among the potential numbers
                 val = ylist[Math.floor(Math.random() * ylist.length)];
+                for (var k = 0; k < i; k++){
+                    let index = board[k][j].value;
+                    for (var l = 0; l < j; l++){
+                        testval_1 = board[k][l].value
+                        if (testval_1 == val){
+                            testval_2 = board[i][l].value
+                            if (testval_2 == index){
+                                j = -1;
+                                numL = [];
+                                for (var k = 0; k < grid; k++){
+                                    let num = k+1;
+                                    numL.push(num.toString());
+                                    board[i][k].value = "0"
+                                }
+                                continue;
+                            }
+                        }
+                    }
+                }
             }
             else {
+                // Set the value to a random number among the potential numbers
                 val = numL[Math.floor(Math.random() * numL.length)];
             }
+            // Assign the current grid position to the randomly selected value
             board[i][j].value = val;
+            // Clear the main variable of potential numbers of the current selected value
             numL.splice(numL.indexOf(val), 1);
+            // Clear the temporary variable of potential numbers
             ylist = [];
         }
     }
@@ -211,9 +268,10 @@ function start_game(){
 
     win = true
     resetDiv.style.display = "flex"
-    create_board()
+    create_board();
+    rev_interch_tiles();
 
-    for (var l = 0; l < 41; l++){
+    for (var l = 0; l < visibleTiles; l++){
         let rx = Math.floor(Math.random() * grid);
         let ry = Math.floor(Math.random() * grid);
         if (board[rx][ry].visible == true){
