@@ -281,17 +281,23 @@ function start_game(){
     for (i = 0; i < grid; i++){
         console.log(board[0][i].value, board[1][i].value, board[2][i].value, board[3][i].value, board[4][i].value, board[5][i].value, board[6][i].value, board[7][i].value, board[8][i].value)
     }
-    if (time == 0){
-        timer()
-        console.log("timer initiated")
-    }
-    else{
-        time = 0
-        document.querySelector("#clock").innerHTML = "0:00"
+
+    reset_game();
+
+}
+
+function stop_timer(){
+    var id = window.setTimeout(function() {}, 0);
+
+    while (id--) {
+        window.clearTimeout(id); // will do nothing if no timeout with id is present
     }
 }
 
 function reset_game(){
+    stop_timer()
+    timer()
+    console.log("timer initiated")
     for (var i = 0; i < grid; i++){
         for (var j = 0; j < grid; j++){
             board[i][j].input.value = "";
