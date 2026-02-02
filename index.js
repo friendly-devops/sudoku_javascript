@@ -150,10 +150,26 @@ for (var i = 0; i < grid; i++){
     }
 }
 
+function reset_row(col){
+    numL = [];
+    for (var i = 0; i < grid; i++){
+        let num = i+1;
+        numL.push(num.toString());
+        board[col][k].value = "0"
+    }
+    return numL;
+}
+
+function reset_board(row){
+    for (var i = 0; i < row; i++){
+        void reset_row(i);
+    }
+}
 
 function create_board(){
     // Iterate through the rows
     for (var i = 0; i < grid; i++){
+        reset_occurences = 0
         // Populate a list of from 1 to 9 of numbers to potentially be used
         for (var n = 0; n < grid; n++){
             let num = n+1
@@ -187,36 +203,19 @@ function create_board(){
                 }
                 // Refresh the row if all potential numbers have been exhausted
                 if (ylist.length < 1){
-                    j = -1;
-                    numL = [];
-                    for (var k = 0; k < grid; k++){
-                        let num = k+1;
-                        numL.push(num.toString());
-                        board[i][k].value = "0"
+                    reset_occurences++
+                    if (reset_occurences >= 10) {
+                        i = 0;
+                        j = 0;
+                        resest_board();
+                        break;
                     }
+                    j = -1;
+                    numL = reset_row(i);
                     continue;
                 }
                 // Set the value to a random number among the potential numbers
                 val = ylist[Math.floor(Math.random() * ylist.length)];
-                for (var k = 0; k < i; k++){
-                    let index = board[k][j].value;
-                    for (var l = 0; l < j; l++){
-                        testval_1 = board[k][l].value
-                        if (testval_1 == val){
-                            testval_2 = board[i][l].value
-                            if (testval_2 == index){
-                                j = -1;
-                                numL = [];
-                                for (var k = 0; k < grid; k++){
-                                    let num = k+1;
-                                    numL.push(num.toString());
-                                    board[i][k].value = "0"
-                                }
-                                continue;
-                            }
-                        }
-                    }
-                }
             }
             else {
                 // Set the value to a random number among the potential numbers
