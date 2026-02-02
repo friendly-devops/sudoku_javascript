@@ -150,12 +150,12 @@ for (var i = 0; i < grid; i++){
     }
 }
 
-function reset_row(col){
+function reset_row(row){
     numL = [];
     for (var i = 0; i < grid; i++){
         let num = i+1;
         numL.push(num.toString());
-        board[col][k].value = "0"
+        board[row][i].value = "0"
     }
     return numL;
 }
