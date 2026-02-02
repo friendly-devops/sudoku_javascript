@@ -207,7 +207,7 @@ function create_board(){
                     if (reset_occurences >= 10) {
                         i = 0;
                         j = 0;
-                        resest_board();
+                        resest_board(i);
                         break;
                     }
                     j = -1;
