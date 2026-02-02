@@ -88,25 +88,26 @@ function checkBoard(){
 }
 
 function rev_interch_tiles(){
-    for (var i = 0; i < grid; i++){
-        for (var j = 0; j < grid; j++){
-                for (var k = 0; k < i; k++){
-                    let index = board[k][j].value;
-                    for (var l = 0; l < j; l++){
-                        testval_1 = board[k][l].value
-                        if (testval_1 == val){
-                            testval_2 = board[i][l].value;
-                            if (testval_2 == index){
-                                board[k][j].visible = true;
-                                board[k][l].visible = true;
-                                board[i][l].visible = true;
-                                board[i][j].visible = true;
-                                visibleTiles = visibleTiles - 4;
-                                continue;
-                            }
+    offset = 0;
+    for (var i = 1; i < grid; i++){
+        if (i > 2){ offset = 1};
+        for (var j = 3 - offset; j < grid; j++){
+            let index = board[i][j].value;
+            for (var k = j - 1; k >=0; k--){
+                testval_1 = board[i][k].value;
+                for (var l = i - 1; l >=0; l--){
+                    testval_2 = board[l][k].value;
+                    if (testval_2 == index) {
+                        testval_3 = board[l][j].value;
+                        if (testval_3 == testval_1){
+                            board[i][j].visible = true;
+                            board[i][k].visible = true;
+                            board[l][j].visible = true;
+                            board[l][k].visible = true;
                         }
                     }
                 }
+            }
         }
     }
 }
@@ -170,6 +171,7 @@ function create_board(){
     // Iterate through the rows
     for (var i = 0; i < grid; i++){
         reset_occurences = 0
+        numL = [];
         // Populate a list of from 1 to 9 of numbers to potentially be used
         for (var n = 0; n < grid; n++){
             let num = n+1
@@ -205,9 +207,8 @@ function create_board(){
                 if (ylist.length < 1){
                     reset_occurences++
                     if (reset_occurences >= 10) {
-                        i = 0;
-                        j = 0;
-                        resest_board(i);
+                        reset_board(i);
+                        i = -1;
                         break;
                     }
                     j = -1;
@@ -269,17 +270,6 @@ function start_game(){
     resetDiv.style.display = "flex"
     create_board();
     rev_interch_tiles();
-
-    for (var l = 0; l < visibleTiles; l++){
-        let rx = Math.floor(Math.random() * grid);
-        let ry = Math.floor(Math.random() * grid);
-        if (board[rx][ry].visible == true){
-            l--;
-        }
-        else {
-            board[rx][ry].visible = true;
-        }
-    }
 
     for (var i = 0; i < grid; i++){
         for (var j = 0; j < grid; j++){
